@@ -4,14 +4,46 @@ import {
   Image,
   StyleSheet,
   Button,
+  ScrollView,
   TouchableOpacity,
   TextInput,
 } from 'react-native';
-import React from 'react'
-
+import React, {useState} from 'react';
+import {baseUrl} from "../../../utils/Url";
 export default function CustomerSignUp({navigation}) {
+  
+  // userData state
+  const [userData, setUserData] = useState({});
+
+  const handleOnChange =  (name, text) => {
+    setUserData({
+      ...userData,
+      [name] : text
+    });
+  }
+
+  const handleOnSubmit = async (e) => {
+    e.preventDefault();
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData)
+  };
+    try{
+    const response =  await  fetch(`${baseUrl}/user/register`, requestOptions);
+    const data  = await response.json();
+    // localStorage.setItem('data', data)
+    console.log("data",data); 
+    navigation.navigate('Customer');
+    }catch(error){
+      console.log("error", error);
+    }
+  }
+  
+  
+  
   return (
-    <View>
+    <ScrollView>
       <View style={styles.logo}>
         <Image
           source={require('../../../Assets/Helpme.png')}
@@ -22,6 +54,7 @@ export default function CustomerSignUp({navigation}) {
         <View style={styles.containerTextInput}>
           <TextInput
             placeholder="Enter First Name"
+            onChangeText={(text) => handleOnChange("firstName" , text)}
             style={styles.TextInput}
             placeholderTextColor="#fff"
           />
@@ -29,6 +62,7 @@ export default function CustomerSignUp({navigation}) {
         <View style={styles.containerTextInput}>
           <TextInput
             placeholder="Enter Last Name"
+            onChangeText={(text) => handleOnChange("lastName" , text)}
             style={styles.TextInput}
             placeholderTextColor="#fff"
           />
@@ -36,6 +70,7 @@ export default function CustomerSignUp({navigation}) {
         <View style={styles.containerTextInput}>
           <TextInput
             placeholder="Enter Name or Email"
+            onChangeText={(text) => handleOnChange("email" , text)}
             style={styles.TextInput}
             placeholderTextColor="#fff"
           />
@@ -43,6 +78,7 @@ export default function CustomerSignUp({navigation}) {
         <View style={styles.containerTextInput}>
           <TextInput
             placeholder="Enter Password"
+            onChangeText={(text) => handleOnChange("password" , text)}
             autoCapitalize={'none'}
             autoCorrect={false}
             secureTextEntry={true}
@@ -54,6 +90,7 @@ export default function CustomerSignUp({navigation}) {
         <View style={styles.containerTextInput}>
           <TextInput
             placeholder="Enter Confirm Password"
+            onChangeText={(text) => handleOnChange("cPassword" , text)}
             autoCapitalize={'none'}
             autoCorrect={false}
             secureTextEntry={true}
@@ -63,7 +100,7 @@ export default function CustomerSignUp({navigation}) {
           />
         </View>
         <View style={styles.submitButton}>
-            <TouchableOpacity style={styles.submit} onPress={() => navigation.navigate('Customer')}>
+            <TouchableOpacity style={styles.submit} onPress={handleOnSubmit}>
                 <Text>Submit</Text>
             </TouchableOpacity>
         </View>
@@ -74,7 +111,7 @@ export default function CustomerSignUp({navigation}) {
           <Text>Log In</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   )
 }
 
